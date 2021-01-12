@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3000;
 
 const db = require("./models");
+const { Workout } = require("./models");
 
 const app = express();
 
@@ -16,18 +17,18 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-// require("./routes/html-routes.js")(app);
-// require("./routes/api-routes.js")(app);
+require("./routes/html-routes.js")(app);
+require("./routes/api-routes.js")(app);
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populate", { useNewUrlParser: true });
 
-// db.Workouts.create({ name: "Workouts" })
-//   .then(dbWorkouts => {
-//     console.log(dbWorkouts);
-//   })
-//   .catch(({message}) => {
-//     console.log(message);
-//   });
+db.Workout.create({ name: "Workouts" })
+  .then(dbWorkouts => {
+    console.log(dbWorkouts);
+  })
+  .catch(({message}) => {
+    console.log(message);
+  });
 
 // app.post("/exercise", ({body}, res) => {
 //   db.Workouts.create(body)
@@ -41,7 +42,7 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populate", { us
 // });
 
 // app.get("/stats", (req, res) => {
-//   db.Workouts.find({})
+//   db.Workout.find({})
 //     .then(dbWorkouts => {
 //       res.json(dbWorkouts);
 //     })
@@ -50,27 +51,26 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populate", { us
 //     });
 // });
 
-// app.get("/workouts", (req, res) => {
-//   db.Workouts.find({})
-//     .then(dbWorkouts => {
-//       res.json(dbWorkouts);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     });
-// });
+app.get("/workouts", (req, res) => {
+  db.Workout.find({})
+    .then(dbWorkouts => {
+      res.json(dbWorkouts);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
 
-// app.get("/exercise", (req, res) => {
-//   db.Workouts.find({})
-//     .populate("workouts")
-//     .then(dbWorkouts => {
-//       res.json(dbWorkouts);
-//     })
-//     .catch(err => { 
-//       res.json(err);
-//     });
-// });
-
+app.get("/exercise", (req, res) => {
+  db.Workout.find({})
+    .populate("workouts")
+    .then(dbWorkouts => {
+      res.json(dbWorkouts);
+    })
+    .catch(err => { 
+      res.json(err);
+    });
+});
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
